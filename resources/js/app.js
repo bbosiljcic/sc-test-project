@@ -1,4 +1,3 @@
-import report from './services/report.js';
 import reportService from './services/report.js';
 
 let creatingReport = false;
@@ -49,8 +48,8 @@ function renderReportList(result) {
                 `
                 <a class="report_context" onClick="window.onContextMenuClick(this, event)"> </a>
                 <div class="report_context_menu hidden">
-                    <a onClick="window.onEditReport(${id})">Edit</a>
-                    <a onClick="window.onDeleteReport( ${id})">Delete</a>
+                    <a onClick="window.onEditReport(${id})"><i class="fas fa-pencil-alt"></i>Edit</a>
+                    <a onClick="window.onDeleteReport( ${id})"><i class="far fa-trash-alt"></i>Delete</a>
                 </div>
                 `
             )
@@ -64,7 +63,7 @@ function renderReportList(result) {
             return reportsList.innerHTML =`<ul>${list.join('')}</ul>`;
         }
 
-        return reportsList.innerHTML = '<p>It seems you have not created any reports, please use the button below</p>';
+        return reportsList.innerHTML = '<p class="report_list_empty">It seems you have not created any reports, please use the button below</p>';
 
     }
 
@@ -200,6 +199,14 @@ window.onEditReport = (id) => {
 
     editReport(findReportElementById(id));
     editingReport = id;
+}
+
+window.onToggleReportsView = (el) => {
+    el.classList.toggle('wrapper-hidden');
+    const wrapper = document.querySelector('.reports_list_wrapper');
+    console.log('wrapper', wrapper);
+    wrapper.classList.toggle('hidden');
+
 }
 
 

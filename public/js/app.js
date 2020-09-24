@@ -868,7 +868,6 @@ try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _services_report_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./services/report.js */ "./resources/js/services/report.js");
 
-
 var creatingReport = false;
 var editingReport = null;
 var colorList = ['009688', '00695C', 'FFEE58', '5C6BC0', '8D6E63', '039BE5', '283593', '9C27B0', 'EC407A', 'FFC107', 'FF8A65', '3F51B5', '8E24AA', 'FFE082'];
@@ -896,7 +895,7 @@ function renderReportList(result) {
   if (result && result.status && result.status === 200) {
     if (result.data.length) {
       var renderContextMenu = function renderContextMenu(id) {
-        return "\n                <a class=\"report_context\" onClick=\"window.onContextMenuClick(this, event)\"> </a>\n                <div class=\"report_context_menu hidden\">\n                    <a onClick=\"window.onEditReport(".concat(id, ")\">Edit</a>\n                    <a onClick=\"window.onDeleteReport( ").concat(id, ")\">Delete</a>\n                </div>\n                ");
+        return "\n                <a class=\"report_context\" onClick=\"window.onContextMenuClick(this, event)\"> </a>\n                <div class=\"report_context_menu hidden\">\n                    <a onClick=\"window.onEditReport(".concat(id, ")\"><i class=\"fas fa-pencil-alt\"></i>Edit</a>\n                    <a onClick=\"window.onDeleteReport( ").concat(id, ")\"><i class=\"far fa-trash-alt\"></i>Delete</a>\n                </div>\n                ");
       };
 
       var renderAvatar = function renderAvatar(i) {
@@ -909,7 +908,7 @@ function renderReportList(result) {
       return reportsList.innerHTML = "<ul>".concat(list.join(''), "</ul>");
     }
 
-    return reportsList.innerHTML = '<p>It seems you have not created any reports, please use the button below</p>';
+    return reportsList.innerHTML = '<p class="report_list_empty">It seems you have not created any reports, please use the button below</p>';
   }
 
   reportsList.innerHTML('Something went wrong fetching report data!');
@@ -1038,6 +1037,13 @@ window.onEditReport = function (id) {
 
   editReport(findReportElementById(id));
   editingReport = id;
+};
+
+window.onToggleReportsView = function (el) {
+  el.classList.toggle('wrapper-hidden');
+  var wrapper = document.querySelector('.reports_list_wrapper');
+  console.log('wrapper', wrapper);
+  wrapper.classList.toggle('hidden');
 };
 
 window.onclick = function (event) {
