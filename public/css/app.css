@@ -139,6 +139,20 @@ body {
   font-family: "Roboto", sans-serif;
 }
 
+a,
+a:hover,
+a:visited {
+  color: #18b976;
+}
+
+a {
+  cursor: pointer;
+}
+
+a:hover {
+  opacity: 0.6;
+}
+
 .wrapper {
   width: 100vw;
   height: 100vh;
@@ -172,6 +186,7 @@ body {
   padding: 0.9rem;
   border-right: 1px solid #e5e5e5;
   color: #333;
+  font-size: 0.9rem;
 }
 
 .main,
@@ -181,5 +196,22 @@ body {
 
 .main {
   padding: 2rem;
+}
+
+.reports_title {
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+.reports_list {
+  margin-bottom: 1.5rem;
+}
+
+.reports_input {
+  display: block;
+}
+
+.reports_input.hidden {
+  display: none;
 }
 

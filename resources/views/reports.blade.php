@@ -17,7 +17,11 @@
                 </div>
             </div>
             <div class="reports">
-                my Reports
+                <span class="reports_title">my Reports</span>
+                <div class="reports_list" id="reports_list"></div>
+                <input class="reports_input hidden" id="reports_input" placeholder="My new report" type="text"/>
+                <a id="reports_create">Save Report</a>
+                <div class="reports_error" id="reports_error" /></div>
             </div>
         </div>
         <div class="main">

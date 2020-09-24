@@ -7,6 +7,15 @@ body
     background-color: rgb(242 244 244)
     font-family: 'Roboto', sans-serif
 
+a, a:hover, a:visited
+    color: rgb(24 185 118)
+
+a
+    cursor: pointer
+
+    &:hover
+        opacity: 0.6
+
 .wrapper
     width: 100vw
     height: 100vh
@@ -36,6 +45,7 @@ body
     padding: 0.9rem
     border-right: 1px solid rgb(229 229 229)
     color: #333
+    font-size: 0.9rem
 
 .main, .reports
     flex-grow: 1
@@ -43,3 +53,17 @@ body
 
 .main
     padding: 2rem
+
+.reports_title
+    margin-bottom: 1.5rem
+    display: block
+
+.reports_list
+    margin-bottom: 1.5rem
+
+.reports_input
+    display: block
+
+.reports_input
+    &.hidden
+        display: none
