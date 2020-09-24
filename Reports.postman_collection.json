@@ -1,0 +1,121 @@
+{
+	"info": {
+		"_postman_id": "105a629a-1f55-4e82-9c9c-af5aabe59471",
+		"name": "Reports",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "getAllReports",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://homestead.test/reports",
+					"protocol": "http",
+					"host": [
+						"homestead",
+						"test"
+					],
+					"path": [
+						"reports"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createNewReport",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://homestead.test/reports/?title=My second Report",
+					"protocol": "http",
+					"host": [
+						"homestead",
+						"test"
+					],
+					"path": [
+						"reports",
+						""
+					],
+					"query": [
+						{
+							"key": "title",
+							"value": "My second Report"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getOneReportById",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://homestead.test/reports/1",
+					"protocol": "http",
+					"host": [
+						"homestead",
+						"test"
+					],
+					"path": [
+						"reports",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateOneReportById",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "http://homestead.test/reports/2?title=My updated report",
+					"protocol": "http",
+					"host": [
+						"homestead",
+						"test"
+					],
+					"path": [
+						"reports",
+						"2"
+					],
+					"query": [
+						{
+							"key": "title",
+							"value": "My updated report"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteOneReportById",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://homestead.test/reports/2",
+					"protocol": "http",
+					"host": [
+						"homestead",
+						"test"
+					],
+					"path": [
+						"reports",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
