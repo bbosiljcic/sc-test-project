@@ -185,7 +185,7 @@ a:hover {
 }
 
 .reports {
-  padding: 0.9rem;
+  padding: 0.9rem 0;
   border-right: 1px solid #e5e5e5;
   color: #333;
   font-size: 0.9rem;
@@ -201,6 +201,7 @@ a:hover {
 }
 
 .reports_title {
+  padding: 0 0.9rem;
   margin-bottom: 1.5rem;
   display: block;
 }
@@ -210,7 +211,10 @@ a:hover {
 }
 
 .reports_list li {
-  padding: 0.75rem 0rem;
+  display: flex;
+  align-items: center;
+  height: 1.75rem;
+  padding: 0.5rem 0.9rem;
   transition: background 0.3s ease-in;
   position: relative;
 }
@@ -219,15 +223,33 @@ a:hover {
   background-color: #f4f7f7;
 }
 
-.reports_input {
+.reports_list li:hover .report_context {
   display: block;
 }
 
-.reports_input {
-  border: 1px solid #e5e5e5;
+.reports_bottom {
+  padding: 0 0.9rem;
 }
 
-.reports_input.hidden {
+.reports_error {
+  margin-top: 2rem;
+  font-size: 0.8rem;
+  color: #ef5350;
+}
+
+.reports_input {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+input,
+input:focus,
+input:active {
+  border: 1px solid #e5e5e5;
+  outline: none;
+}
+
+input.hidden {
   display: none;
 }
 
@@ -235,6 +257,7 @@ a:hover {
   float: right;
   color: #333;
   padding: 0 0.5rem;
+  display: none;
 }
 
 .report_context::after {
@@ -245,7 +268,8 @@ a:hover {
 .report_context_menu {
   position: absolute;
   background: #fff;
-  right: 0;
+  right: 1rem;
+  top: 50%;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   z-index: 100;
 }
@@ -259,5 +283,28 @@ a:hover {
   min-width: 5rem;
   padding: 0.5rem 1rem;
   display: block;
+}
+
+.report_avatar {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: block;
+  float: left;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+.report_title {
+  flex-grow: 1;
+  white-space: nowrap;
+  width: 100%;
+  max-width: 9.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reports_edit_input {
+  max-width: 9.25rem;
 }
 

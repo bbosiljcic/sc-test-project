@@ -19,9 +19,11 @@
             <div class="reports">
                 <span class="reports_title">my Reports</span>
                 <div class="reports_list" id="reports_list"></div>
-                <input class="reports_input hidden" id="reports_input" placeholder="My new report" type="text"/>
-                <a id="reports_create" onClick="window.onSaveReport()">Save Report</a>
-                <div class="reports_error" id="reports_error"></div>
+                <div class="reports_bottom">
+                    <input class="reports_input hidden" id="reports_input" placeholder="My new report" type="text"/>
+                    <a id="reports_create" onClick="window.onSaveReport(event)">Save Report</a>
+                    <div class="reports_error" id="reports_error"></div>
+                </div>
             </div>
         </div>
         <div class="main">

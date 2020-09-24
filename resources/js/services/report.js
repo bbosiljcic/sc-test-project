@@ -16,7 +16,7 @@ async function getOneById(id) {
 
 async function create(title) {
     const response = await fetch(baseURL, {
-        method: 'post',
+        method: 'POST',
         body: `title=${title}`,
         headers: {
             'Content-type': 'application/x-www-form-urlencoded'
@@ -26,9 +26,14 @@ async function create(title) {
     return data;
 }
 
-async function updateOneById(id) {
-    // TODO:
-    const response = await fetch(baseURL);
+async function updateOneById(id, title) {
+    const response = await fetch(`${baseURL}/${id}`, {
+        method: 'PATCH',
+        body: `title=${title}`,
+        headers: {
+            'Content-type': 'application/x-www-form-urlencoded'
+        }
+    })
     const data = await response.json();
     return data;
 }

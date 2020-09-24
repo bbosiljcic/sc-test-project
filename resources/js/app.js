@@ -2,13 +2,30 @@ import report from './services/report.js';
 import reportService from './services/report.js';
 
 let creatingReport = false;
+let editingReport = null;
+
+const colorList = [
+    '009688',
+    '00695C',
+    'FFEE58',
+    '5C6BC0',
+    '8D6E63',
+    '039BE5',
+    '283593',
+    '9C27B0',
+    'EC407A',
+    'FFC107',
+    'FF8A65',
+    '3F51B5',
+    '8E24AA',
+    'FFE082',
+]
 
 document.addEventListener('DOMContentLoaded', (event) => {
-    // render the list for skeleton screens
     renderReportList();
     document.addEventListener('keyup', (e) => {
-        if (e.code === 'Escape') cancelNewReport();
-        else if (e.code === 'Enter') createNewReport();
+        if (e.code === 'Escape') onEsc();
+        else if (e.code === 'Enter') onEnter();
     });
 })
 
@@ -22,7 +39,7 @@ function renderReportList(result) {
     const reportsList = document.getElementById('reports_list');
 
     if (!result) {
-        return reportsList.innerHTML = 'todo skeleton';
+        return ''
     }
 
     if (result && result.status && result.status === 200) {
@@ -37,7 +54,13 @@ function renderReportList(result) {
                 </div>
                 `
             )
-            const list = result.data.map(r => `<li data-report-id="${r.id}">${r.title} ${renderContextMenu(r.id)}</li>`);
+
+             const renderAvatar = (i) => (
+                `
+                <span class="report_avatar" style="background-color: #${colorList[i % colorList.length]}"> </span>
+                `
+                        )
+            const list = result.data.map((r, i) => `<li class="report_list_item" data-report-id="${r.id}">${renderAvatar(i)}<span class="report_title">${r.title}</span> ${renderContextMenu(r.id)}</li>`);
             return reportsList.innerHTML =`<ul>${list.join('')}</ul>`;
         }
 
@@ -48,32 +71,60 @@ function renderReportList(result) {
     reportsList.innerHTML('Something went wrong fetching report data!');
 }
 
-function cancelNewReport() {
-    // if the creation gets cancled we add the hidden class and remove the value from the imput
-    creatingReport = false;
-    const reportsInput = document.getElementById('reports_input');
-    reportsInput.classList.add('hidden');
-    reportsInput.value = '';
-
-    const reportsError = document.getElementById('reports_error');
-    reportsError.innerHTML = '';
-}
-
-function createNewReport() {
-    if (!creatingReport) return;
-    const reportsInput = document.getElementById('reports_input');
-
-    if (reportsInput.value) {
-        return reportService.create(reportsInput.value).then(() => {
-            reportService.getAll().then((res) => {
-                renderReportList(res);
-                cancelNewReport();
-            });
-        });
+function onEsc() {
+    if (creatingReport) {
+        // if the creation gets cancled we add the hidden class and remove the value from the imput
+        creatingReport = false;
+        const reportsInput = document.getElementById('reports_input');
+        reportsInput.classList.add('hidden');
+        reportsInput.value = '';
+        const reportsError = document.getElementById('reports_error');
+        reportsError.innerHTML = '';
+    } else if (editingReport) {
+        // if the editing gets canceld we refetch the list
+        reportService.getAll().then((res) => {
+            renderReportList(res);
+            editingReport = null;
+        })
     }
 
-    const reportsError = document.getElementById('reports_error');
-    reportsError.innerHTML = 'Your report is missing a title';
+}
+
+function onEnter() {
+    console.log('on enter', creatingReport)
+    if (creatingReport) {
+        const reportsInput = document.getElementById('reports_input');
+
+        if (reportsInput.value) {
+            return reportService.create(reportsInput.value).then(() => {
+                reportService.getAll().then((res) => {
+                    renderReportList(res);
+                    onEsc();
+                });
+            });
+        }
+
+        const reportsError = document.getElementById('reports_error');
+        reportsError.innerHTML = 'Your report is missing a title!';
+    } else if (editingReport) {
+        const reportsEditInput = document.getElementById('reports_edit_input');
+
+        if (reportsEditInput.value) {
+            return reportService.updateOneById(editingReport, reportsEditInput.value).then(() => {
+                reportService.getAll().then((res) => {
+                    renderReportList(res);
+                    editingReport = null;
+                });
+            });
+
+        }
+
+        // just refetch data if an empty title was set
+        reportService.getAll().then((res) => {
+            renderReportList(res);
+            creatingReport = null;
+        });
+    }
 }
 
 function closeAllContextMenus() {
@@ -81,6 +132,19 @@ function closeAllContextMenus() {
     Array.from(allContextMenus).forEach((el) => {
         el.classList.add('hidden');
     });
+}
+
+function editReport(el) {
+    if (!el) return;
+    const span = el.children[1];
+    const editInput = document.createElement('input');
+    editInput.setAttribute('type', 'text');
+    editInput.setAttribute('id', 'reports_edit_input');
+    editInput.setAttribute('class', 'reports_edit_input');
+    editInput.value = el.children[1].innerHTML;
+
+    el.replaceChild(editInput, span);
+
 }
 
 window.onSaveReport = () => {
@@ -103,6 +167,17 @@ window.onDeleteReport = (id) => {
             renderReportList(res);
         });
      });
+}
+
+window.onEditReport = (id) => {
+    const allListItems = document.getElementsByClassName('report_list_item');
+    let reportGettingEdited = null;
+    Array.from(allListItems).forEach((el) => {
+        if (el.getAttribute('data-report-id') === id.toString()) reportGettingEdited = el;
+    });
+
+    editReport(reportGettingEdited);
+    editingReport = id;
 }
 
 

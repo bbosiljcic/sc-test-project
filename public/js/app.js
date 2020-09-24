@@ -870,11 +870,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var creatingReport = false;
+var editingReport = null;
+var colorList = ['009688', '00695C', 'FFEE58', '5C6BC0', '8D6E63', '039BE5', '283593', '9C27B0', 'EC407A', 'FFC107', 'FF8A65', '3F51B5', '8E24AA', 'FFE082'];
 document.addEventListener('DOMContentLoaded', function (event) {
-  // render the list for skeleton screens
   renderReportList();
   document.addEventListener('keyup', function (e) {
-    if (e.code === 'Escape') cancelNewReport();else if (e.code === 'Enter') createNewReport();
+    if (e.code === 'Escape') onEsc();else if (e.code === 'Enter') onEnter();
   });
 });
 
@@ -889,7 +890,7 @@ function renderReportList(result) {
   var reportsList = document.getElementById('reports_list');
 
   if (!result) {
-    return reportsList.innerHTML = 'todo skeleton';
+    return '';
   }
 
   if (result && result.status && result.status === 200) {
@@ -898,8 +899,12 @@ function renderReportList(result) {
         return "\n                <a class=\"report_context\" onClick=\"window.onContextMenuClick(this, event)\"> </a>\n                <div class=\"report_context_menu hidden\">\n                    <a onClick=\"window.onEditReport(".concat(id, ")\">Edit</a>\n                    <a onClick=\"window.onDeleteReport( ").concat(id, ")\">Delete</a>\n                </div>\n                ");
       };
 
-      var list = result.data.map(function (r) {
-        return "<li data-report-id=\"".concat(r.id, "\">").concat(r.title, " ").concat(renderContextMenu(r.id), "</li>");
+      var renderAvatar = function renderAvatar(i) {
+        return "\n                <span class=\"report_avatar\" style=\"background-color: #".concat(colorList[i % colorList.length], "\"> </span>\n                ");
+      };
+
+      var list = result.data.map(function (r, i) {
+        return "<li class=\"report_list_item\" data-report-id=\"".concat(r.id, "\">").concat(renderAvatar(i), "<span class=\"report_title\">").concat(r.title, "</span> ").concat(renderContextMenu(r.id), "</li>");
       });
       return reportsList.innerHTML = "<ul>".concat(list.join(''), "</ul>");
     }
@@ -910,31 +915,59 @@ function renderReportList(result) {
   reportsList.innerHTML('Something went wrong fetching report data!');
 }
 
-function cancelNewReport() {
-  // if the creation gets cancled we add the hidden class and remove the value from the imput
-  creatingReport = false;
-  var reportsInput = document.getElementById('reports_input');
-  reportsInput.classList.add('hidden');
-  reportsInput.value = '';
-  var reportsError = document.getElementById('reports_error');
-  reportsError.innerHTML = '';
-}
-
-function createNewReport() {
-  if (!creatingReport) return;
-  var reportsInput = document.getElementById('reports_input');
-
-  if (reportsInput.value) {
-    return _services_report_js__WEBPACK_IMPORTED_MODULE_0__["default"].create(reportsInput.value).then(function () {
-      _services_report_js__WEBPACK_IMPORTED_MODULE_0__["default"].getAll().then(function (res) {
-        renderReportList(res);
-        cancelNewReport();
-      });
+function onEsc() {
+  if (creatingReport) {
+    // if the creation gets cancled we add the hidden class and remove the value from the imput
+    creatingReport = false;
+    var reportsInput = document.getElementById('reports_input');
+    reportsInput.classList.add('hidden');
+    reportsInput.value = '';
+    var reportsError = document.getElementById('reports_error');
+    reportsError.innerHTML = '';
+  } else if (editingReport) {
+    // if the editing gets canceld we refetch the list
+    _services_report_js__WEBPACK_IMPORTED_MODULE_0__["default"].getAll().then(function (res) {
+      renderReportList(res);
+      editingReport = null;
     });
   }
+}
 
-  var reportsError = document.getElementById('reports_error');
-  reportsError.innerHTML = 'Your report is missing a title';
+function onEnter() {
+  console.log('on enter', creatingReport);
+
+  if (creatingReport) {
+    var reportsInput = document.getElementById('reports_input');
+
+    if (reportsInput.value) {
+      return _services_report_js__WEBPACK_IMPORTED_MODULE_0__["default"].create(reportsInput.value).then(function () {
+        _services_report_js__WEBPACK_IMPORTED_MODULE_0__["default"].getAll().then(function (res) {
+          renderReportList(res);
+          onEsc();
+        });
+      });
+    }
+
+    var reportsError = document.getElementById('reports_error');
+    reportsError.innerHTML = 'Your report is missing a title!';
+  } else if (editingReport) {
+    var reportsEditInput = document.getElementById('reports_edit_input');
+
+    if (reportsEditInput.value) {
+      return _services_report_js__WEBPACK_IMPORTED_MODULE_0__["default"].updateOneById(editingReport, reportsEditInput.value).then(function () {
+        _services_report_js__WEBPACK_IMPORTED_MODULE_0__["default"].getAll().then(function (res) {
+          renderReportList(res);
+          editingReport = null;
+        });
+      });
+    } // just refetch data if an empty title was set
+
+
+    _services_report_js__WEBPACK_IMPORTED_MODULE_0__["default"].getAll().then(function (res) {
+      renderReportList(res);
+      creatingReport = null;
+    });
+  }
 }
 
 function closeAllContextMenus() {
@@ -942,6 +975,17 @@ function closeAllContextMenus() {
   Array.from(allContextMenus).forEach(function (el) {
     el.classList.add('hidden');
   });
+}
+
+function editReport(el) {
+  if (!el) return;
+  var span = el.children[1];
+  var editInput = document.createElement('input');
+  editInput.setAttribute('type', 'text');
+  editInput.setAttribute('id', 'reports_edit_input');
+  editInput.setAttribute('class', 'reports_edit_input');
+  editInput.value = el.children[1].innerHTML;
+  el.replaceChild(editInput, span);
 }
 
 window.onSaveReport = function () {
@@ -963,6 +1007,16 @@ window.onDeleteReport = function (id) {
       renderReportList(res);
     });
   });
+};
+
+window.onEditReport = function (id) {
+  var allListItems = document.getElementsByClassName('report_list_item');
+  var reportGettingEdited = null;
+  Array.from(allListItems).forEach(function (el) {
+    if (el.getAttribute('data-report-id') === id.toString()) reportGettingEdited = el;
+  });
+  editReport(reportGettingEdited);
+  editingReport = id;
 };
 
 window.onclick = function (event) {
@@ -1073,7 +1127,7 @@ function _create() {
           case 0:
             _context3.next = 2;
             return fetch(baseURL, {
-              method: 'post',
+              method: 'POST',
               body: "title=".concat(title),
               headers: {
                 'Content-type': 'application/x-www-form-urlencoded'
@@ -1099,19 +1153,25 @@ function _create() {
   return _create.apply(this, arguments);
 }
 
-function updateOneById(_x3) {
+function updateOneById(_x3, _x4) {
   return _updateOneById.apply(this, arguments);
 }
 
 function _updateOneById() {
-  _updateOneById = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(id) {
+  _updateOneById = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(id, title) {
     var response, data;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
             _context4.next = 2;
-            return fetch(baseURL);
+            return fetch("".concat(baseURL, "/").concat(id), {
+              method: 'PATCH',
+              body: "title=".concat(title),
+              headers: {
+                'Content-type': 'application/x-www-form-urlencoded'
+              }
+            });
 
           case 2:
             response = _context4.sent;
@@ -1132,7 +1192,7 @@ function _updateOneById() {
   return _updateOneById.apply(this, arguments);
 }
 
-function deleteOneById(_x4) {
+function deleteOneById(_x5) {
   return _deleteOneById.apply(this, arguments);
 }
 
