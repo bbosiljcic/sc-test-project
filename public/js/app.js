@@ -1005,7 +1005,12 @@ function cancelReportEdit(el) {
 
 window.onSaveReport = function () {
   if (creatingReport) return;
-  if (editingReport) cancelReportEdit(findReportElementById(editingReport));
+
+  if (editingReport) {
+    cancelReportEdit(findReportElementById(editingReport));
+    editingReport = null;
+  }
+
   var reportsInput = document.getElementById('reports_input');
   reportsInput.classList.remove('hidden');
   creatingReport = true;
@@ -1036,6 +1041,7 @@ window.onEditReport = function (id) {
     }
   }
 
+  if (creatingReport) onEsc();
   editReport(findReportElementById(id));
   editingReport = id;
 };
@@ -1043,7 +1049,6 @@ window.onEditReport = function (id) {
 window.onToggleReportsView = function (el) {
   el.classList.toggle('wrapper-hidden');
   var wrapper = document.querySelector('.reports_list_wrapper');
-  console.log('wrapper', wrapper);
   wrapper.classList.toggle('hidden');
 };
 

@@ -166,7 +166,10 @@ function cancelReportEdit(el) {
 
 window.onSaveReport = () => {
     if (creatingReport) return;
-    if (editingReport) cancelReportEdit(findReportElementById(editingReport));
+    if (editingReport) {
+        cancelReportEdit(findReportElementById(editingReport));
+        editingReport = null;
+    }
 
     const reportsInput = document.getElementById('reports_input');
     reportsInput.classList.remove('hidden');
@@ -198,6 +201,8 @@ window.onEditReport = (id) => {
         }
     }
 
+    if (creatingReport) onEsc();
+
     editReport(findReportElementById(id));
     editingReport = id;
 }
@@ -205,7 +210,6 @@ window.onEditReport = (id) => {
 window.onToggleReportsView = (el) => {
     el.classList.toggle('wrapper-hidden');
     const wrapper = document.querySelector('.reports_list_wrapper');
-    console.log('wrapper', wrapper);
     wrapper.classList.toggle('hidden');
 
 }
