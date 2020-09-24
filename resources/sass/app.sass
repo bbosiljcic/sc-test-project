@@ -1,4 +1,45 @@
 @import reset
 
+html
+    font-size: 16px
+
 body
-    background: rgb(242 244 244)
+    background-color: rgb(242 244 244)
+    font-family: 'Roboto', sans-serif
+
+.wrapper
+    width: 100vw
+    height: 100vh
+    display: flex
+
+.sidebar
+    width: 19rem
+    background-color: #fff
+    display: flex
+
+.menu
+    width: 3.75rem
+    background-color: #000
+
+    .logo
+        height: 3.75rem
+        background-color: rgb(24 185 118)
+
+        img
+            width: 2.5rem
+            height: 2.5rem
+            display: block
+            padding: 0.625rem
+
+
+.reports
+    padding: 0.9rem
+    border-right: 1px solid rgb(229 229 229)
+    color: #333
+
+.main, .reports
+    flex-grow: 1
+
+
+.main
+    padding: 2rem
