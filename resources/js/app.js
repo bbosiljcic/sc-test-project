@@ -60,7 +60,7 @@ function renderReportList(result) {
                 <span class="report_avatar" style="background-color: #${colorList[i % colorList.length]}"> </span>
                 `
                         )
-            const list = result.data.map((r, i) => `<li class="report_list_item" data-report-id="${r.id}">${renderAvatar(i)}<span class="report_title">${r.title}</span> ${renderContextMenu(r.id)}</li>`);
+            const list = result.data.map((r, i) => `<li class="report_list_item" title="${r.title}" data-report-id="${r.id}">${renderAvatar(i)}<span class="report_title">${r.title}</span> ${renderContextMenu(r.id)}</li>`);
             return reportsList.innerHTML =`<ul>${list.join('')}</ul>`;
         }
 
@@ -91,7 +91,6 @@ function onEsc() {
 }
 
 function onEnter() {
-    console.log('on enter', creatingReport)
     if (creatingReport) {
         const reportsInput = document.getElementById('reports_input');
 
@@ -134,17 +133,36 @@ function closeAllContextMenus() {
     });
 }
 
+function findReportElementById(id) {
+    const allListItems = document.getElementsByClassName('report_list_item');
+    let reportEl = null;
+    Array.from(allListItems).forEach((el) => {
+        if (el.getAttribute('data-report-id') === id.toString()) reportEl = el;
+    });
+
+    return reportEl;
+}
+
 function editReport(el) {
     if (!el) return;
-    const span = el.children[1];
+    const span = el.querySelector('.report_title');
+    span.classList.add('hidden');
     const editInput = document.createElement('input');
     editInput.setAttribute('type', 'text');
     editInput.setAttribute('id', 'reports_edit_input');
     editInput.setAttribute('class', 'reports_edit_input');
     editInput.value = el.children[1].innerHTML;
 
-    el.replaceChild(editInput, span);
+    el.append(editInput, span);
+}
 
+function cancelReportEdit(el) {
+    if (!el) return;
+    const span = el.querySelector('.report_title');
+    span.classList.remove('hidden');
+
+    const input = el.querySelector('#reports_edit_input');
+    el.removeChild(input);
 }
 
 window.onSaveReport = () => {
@@ -170,13 +188,17 @@ window.onDeleteReport = (id) => {
 }
 
 window.onEditReport = (id) => {
-    const allListItems = document.getElementsByClassName('report_list_item');
-    let reportGettingEdited = null;
-    Array.from(allListItems).forEach((el) => {
-        if (el.getAttribute('data-report-id') === id.toString()) reportGettingEdited = el;
-    });
+    // don't allow editing of more than one reports at the same time
+    if (editingReport) {
+        // trying to edit the same report again, do nothing
+        if (editingReport === id) {
+            return;
+        } else {
+            cancelReportEdit(findReportElementById(editingReport));
+        }
+    }
 
-    editReport(reportGettingEdited);
+    editReport(findReportElementById(id));
     editingReport = id;
 }
 

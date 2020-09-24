@@ -904,7 +904,7 @@ function renderReportList(result) {
       };
 
       var list = result.data.map(function (r, i) {
-        return "<li class=\"report_list_item\" data-report-id=\"".concat(r.id, "\">").concat(renderAvatar(i), "<span class=\"report_title\">").concat(r.title, "</span> ").concat(renderContextMenu(r.id), "</li>");
+        return "<li class=\"report_list_item\" title=\"".concat(r.title, "\" data-report-id=\"").concat(r.id, "\">").concat(renderAvatar(i), "<span class=\"report_title\">").concat(r.title, "</span> ").concat(renderContextMenu(r.id), "</li>");
       });
       return reportsList.innerHTML = "<ul>".concat(list.join(''), "</ul>");
     }
@@ -934,8 +934,6 @@ function onEsc() {
 }
 
 function onEnter() {
-  console.log('on enter', creatingReport);
-
   if (creatingReport) {
     var reportsInput = document.getElementById('reports_input');
 
@@ -977,15 +975,33 @@ function closeAllContextMenus() {
   });
 }
 
+function findReportElementById(id) {
+  var allListItems = document.getElementsByClassName('report_list_item');
+  var reportEl = null;
+  Array.from(allListItems).forEach(function (el) {
+    if (el.getAttribute('data-report-id') === id.toString()) reportEl = el;
+  });
+  return reportEl;
+}
+
 function editReport(el) {
   if (!el) return;
-  var span = el.children[1];
+  var span = el.querySelector('.report_title');
+  span.classList.add('hidden');
   var editInput = document.createElement('input');
   editInput.setAttribute('type', 'text');
   editInput.setAttribute('id', 'reports_edit_input');
   editInput.setAttribute('class', 'reports_edit_input');
   editInput.value = el.children[1].innerHTML;
-  el.replaceChild(editInput, span);
+  el.append(editInput, span);
+}
+
+function cancelReportEdit(el) {
+  if (!el) return;
+  var span = el.querySelector('.report_title');
+  span.classList.remove('hidden');
+  var input = el.querySelector('#reports_edit_input');
+  el.removeChild(input);
 }
 
 window.onSaveReport = function () {
@@ -1010,12 +1026,17 @@ window.onDeleteReport = function (id) {
 };
 
 window.onEditReport = function (id) {
-  var allListItems = document.getElementsByClassName('report_list_item');
-  var reportGettingEdited = null;
-  Array.from(allListItems).forEach(function (el) {
-    if (el.getAttribute('data-report-id') === id.toString()) reportGettingEdited = el;
-  });
-  editReport(reportGettingEdited);
+  // don't allow editing of more than one reports at the same time
+  if (editingReport) {
+    // trying to edit the same report again, do nothing
+    if (editingReport === id) {
+      return;
+    } else {
+      cancelReportEdit(findReportElementById(editingReport));
+    }
+  }
+
+  editReport(findReportElementById(id));
   editingReport = id;
 };
 

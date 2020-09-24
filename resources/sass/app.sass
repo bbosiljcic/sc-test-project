@@ -97,10 +97,11 @@ input
         display: none
 
 .report_context
-    float: right
     color: #333
     padding: 0 0.5rem
     display: none
+    position: absolute
+    right: 0
 
     &::after
         content: '\2807'
@@ -139,6 +140,9 @@ input
     max-width: 9.25rem
     overflow: hidden
     text-overflow: ellipsis
+
+    &.hidden
+        display: none
 
 .reports_edit_input
     max-width: 9.25rem

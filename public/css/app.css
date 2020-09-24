@@ -254,10 +254,11 @@ input.hidden {
 }
 
 .report_context {
-  float: right;
   color: #333;
   padding: 0 0.5rem;
   display: none;
+  position: absolute;
+  right: 0;
 }
 
 .report_context::after {
@@ -302,6 +303,10 @@ input.hidden {
   max-width: 9.25rem;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.report_title.hidden {
+  display: none;
 }
 
 .reports_edit_input {
