@@ -2,11 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ReportService;
+
 use App\Models\Report;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
+
+    /**
+     * @var reportService
+     */
+    protected $reportService;
+
+    /**
+     * ReportController Constructor
+     *
+     * @param ReportService $reportService
+     *
+     */
+    public function __construct(ReportService $reportService)
+    {
+        $this->reportService = $reportService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +33,18 @@ class ReportController extends Controller
      */
     public function index()
     {
-        //
+        $result = ['status' => 200];
+
+        try {
+            $result['data'] = $this->reportService->getAll();
+        } catch (Exception $e) {
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage()
+            ];
+        }
+
+        return response()->json($result, $result['status']);
     }
 
     /**
@@ -35,7 +65,22 @@ class ReportController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->only([
+            'title',
+        ]);
+
+        $result = ['status' => 200];
+
+        try {
+            $result['data'] = $this->reportService->saveReportData($data);
+        } catch (Exception $e) {
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage()
+            ];
+        }
+
+        return response()->json($result, $result['status']);
     }
 
     /**
@@ -44,9 +89,19 @@ class ReportController extends Controller
      * @param  \App\Models\Report  $report
      * @return \Illuminate\Http\Response
      */
-    public function show(Report $report)
+    public function show($id)
     {
-        //
+        $result = ['status' => 200];
+
+        try {
+            $result['data'] = $this->reportService->getById($id);
+        } catch (Exception $e) {
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage()
+            ];
+        }
+        return response()->json($result, $result['status']);
     }
 
     /**
@@ -67,9 +122,25 @@ class ReportController extends Controller
      * @param  \App\Models\Report  $report
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Report $report)
+    public function update(Request $request, $id)
     {
-        //
+        $data = $request->only([
+            'title',
+        ]);
+
+        $result = ['status' => 200];
+
+        try {
+            $result['data'] = $this->reportService->updateReport($data, $id);
+
+        } catch (Exception $e) {
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage()
+            ];
+        }
+
+        return response()->json($result, $result['status']);
     }
 
     /**
@@ -78,8 +149,18 @@ class ReportController extends Controller
      * @param  \App\Models\Report  $report
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Report $report)
+    public function destroy($id)
     {
-        //
+        $result = ['status' => 200];
+
+        try {
+            $result['data'] = $this->reportService->deleteById($id);
+        } catch (Exception $e) {
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage()
+            ];
+        }
+        return response()->json($result, $result['status']);
     }
 }
