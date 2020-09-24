@@ -1005,6 +1005,7 @@ function cancelReportEdit(el) {
 
 window.onSaveReport = function () {
   if (creatingReport) return;
+  if (editingReport) cancelReportEdit(findReportElementById(editingReport));
   var reportsInput = document.getElementById('reports_input');
   reportsInput.classList.remove('hidden');
   creatingReport = true;
