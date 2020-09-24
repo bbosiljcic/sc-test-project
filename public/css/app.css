@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 html,
 body,
 div,
@@ -207,11 +209,55 @@ a:hover {
   margin-bottom: 1.5rem;
 }
 
+.reports_list li {
+  padding: 0.75rem 0rem;
+  transition: background 0.3s ease-in;
+  position: relative;
+}
+
+.reports_list li:hover {
+  background-color: #f4f7f7;
+}
+
 .reports_input {
   display: block;
 }
 
+.reports_input {
+  border: 1px solid #e5e5e5;
+}
+
 .reports_input.hidden {
   display: none;
+}
+
+.report_context {
+  float: right;
+  color: #333;
+  padding: 0 0.5rem;
+}
+
+.report_context::after {
+  content: "\2807";
+  font-size: 1rem;
+}
+
+.report_context_menu {
+  position: absolute;
+  background: #fff;
+  right: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  z-index: 100;
+}
+
+.report_context_menu.hidden {
+  display: none;
+}
+
+.report_context_menu a {
+  color: #333;
+  min-width: 5rem;
+  padding: 0.5rem 1rem;
+  display: block;
 }
 

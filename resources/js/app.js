@@ -6,7 +6,6 @@ let creatingReport = false;
 document.addEventListener('DOMContentLoaded', (event) => {
     // render the list for skeleton screens
     renderReportList();
-    document.getElementById('reports_create').addEventListener('click', onSaveReport);
     document.addEventListener('keyup', (e) => {
         if (e.code === 'Escape') cancelNewReport();
         else if (e.code === 'Enter') createNewReport();
@@ -28,8 +27,18 @@ function renderReportList(result) {
 
     if (result && result.status && result.status === 200) {
         if (result.data.length) {
-            const list = result.data.map(r => `<li>${r.title}</li>`);
-            return reportsList.innerHTML =`<ul>${list}</ul>`;
+
+            const renderContextMenu = (id) => (
+                `
+                <a class="report_context" onClick="window.onContextMenuClick(this, event)"> </a>
+                <div class="report_context_menu hidden">
+                    <a onClick="window.onEditReport(${id})">Edit</a>
+                    <a onClick="window.onDeleteReport( ${id})">Delete</a>
+                </div>
+                `
+            )
+            const list = result.data.map(r => `<li data-report-id="${r.id}">${r.title} ${renderContextMenu(r.id)}</li>`);
+            return reportsList.innerHTML =`<ul>${list.join('')}</ul>`;
         }
 
         return reportsList.innerHTML = '<p>It seems you have not created any reports, please use the button below</p>';
@@ -40,10 +49,14 @@ function renderReportList(result) {
 }
 
 function cancelNewReport() {
+    // if the creation gets cancled we add the hidden class and remove the value from the imput
     creatingReport = false;
     const reportsInput = document.getElementById('reports_input');
     reportsInput.classList.add('hidden');
     reportsInput.value = '';
+
+    const reportsError = document.getElementById('reports_error');
+    reportsError.innerHTML = '';
 }
 
 function createNewReport() {
@@ -63,7 +76,14 @@ function createNewReport() {
     reportsError.innerHTML = 'Your report is missing a title';
 }
 
-function onSaveReport() {
+function closeAllContextMenus() {
+    const allContextMenus = document.getElementsByClassName('report_context_menu');
+    Array.from(allContextMenus).forEach((el) => {
+        el.classList.add('hidden');
+    });
+}
+
+window.onSaveReport = () => {
     if (creatingReport) return;
 
     const reportsInput = document.getElementById('reports_input');
@@ -71,6 +91,15 @@ function onSaveReport() {
     creatingReport = true;
 }
 
+window.onContextMenuClick = (el, event) => {
+    event.stopPropagation();
+    closeAllContextMenus();
+    el.nextElementSibling.classList.remove('hidden');
+}
 
+
+window.onclick = function (event) {
+    closeAllContextMenus();
+}
 
 window.onload = init();

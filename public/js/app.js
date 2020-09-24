@@ -873,7 +873,6 @@ var creatingReport = false;
 document.addEventListener('DOMContentLoaded', function (event) {
   // render the list for skeleton screens
   renderReportList();
-  document.getElementById('reports_create').addEventListener('click', onSaveReport);
   document.addEventListener('keyup', function (e) {
     if (e.code === 'Escape') cancelNewReport();else if (e.code === 'Enter') createNewReport();
   });
@@ -895,10 +894,14 @@ function renderReportList(result) {
 
   if (result && result.status && result.status === 200) {
     if (result.data.length) {
+      var renderContextMenu = function renderContextMenu(id) {
+        return "\n                <a class=\"report_context\" onClick=\"window.onContextMenuClick(this, event)\"> </a>\n                <div class=\"report_context_menu hidden\">\n                    <a onClick=\"window.onEditReport(".concat(id, ")\">Edit</a>\n                    <a onClick=\"window.onDeleteReport( ").concat(id, ")\">Delete</a>\n                </div>\n                ");
+      };
+
       var list = result.data.map(function (r) {
-        return "<li>".concat(r.title, "</li>");
+        return "<li data-report-id=\"".concat(r.id, "\">").concat(r.title, " ").concat(renderContextMenu(r.id), "</li>");
       });
-      return reportsList.innerHTML = "<ul>".concat(list, "</ul>");
+      return reportsList.innerHTML = "<ul>".concat(list.join(''), "</ul>");
     }
 
     return reportsList.innerHTML = '<p>It seems you have not created any reports, please use the button below</p>';
@@ -908,10 +911,13 @@ function renderReportList(result) {
 }
 
 function cancelNewReport() {
+  // if the creation gets cancled we add the hidden class and remove the value from the imput
   creatingReport = false;
   var reportsInput = document.getElementById('reports_input');
   reportsInput.classList.add('hidden');
   reportsInput.value = '';
+  var reportsError = document.getElementById('reports_error');
+  reportsError.innerHTML = '';
 }
 
 function createNewReport() {
@@ -931,12 +937,29 @@ function createNewReport() {
   reportsError.innerHTML = 'Your report is missing a title';
 }
 
-function onSaveReport() {
+function closeAllContextMenus() {
+  var allContextMenus = document.getElementsByClassName('report_context_menu');
+  Array.from(allContextMenus).forEach(function (el) {
+    el.classList.add('hidden');
+  });
+}
+
+window.onSaveReport = function () {
   if (creatingReport) return;
   var reportsInput = document.getElementById('reports_input');
   reportsInput.classList.remove('hidden');
   creatingReport = true;
-}
+};
+
+window.onContextMenuClick = function (el, event) {
+  event.stopPropagation();
+  closeAllContextMenus();
+  el.nextElementSibling.classList.remove('hidden');
+};
+
+window.onclick = function (event) {
+  closeAllContextMenus();
+};
 
 window.onload = init();
 
