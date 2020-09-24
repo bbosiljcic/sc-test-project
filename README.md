@@ -5,7 +5,7 @@ For me this was the first time working with laravel and the first time working w
 I took this project as an opportunity to figure out whether your tech stack is something would enjoy or not.
 
 ### Demo Video
-    There is a little demo video in the project root titled `test-project-demo.webm`
+There is a little demo video in the project root titled `test-project-demo.webm`
 
 
 ### How to run
