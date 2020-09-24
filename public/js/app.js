@@ -957,6 +957,14 @@ window.onContextMenuClick = function (el, event) {
   el.nextElementSibling.classList.remove('hidden');
 };
 
+window.onDeleteReport = function (id) {
+  return _services_report_js__WEBPACK_IMPORTED_MODULE_0__["default"].deleteOneById(id).then(function () {
+    _services_report_js__WEBPACK_IMPORTED_MODULE_0__["default"].getAll().then(function (res) {
+      renderReportList(res);
+    });
+  });
+};
+
 window.onclick = function (event) {
   closeAllContextMenus();
 };
@@ -1136,7 +1144,9 @@ function _deleteOneById() {
         switch (_context5.prev = _context5.next) {
           case 0:
             _context5.next = 2;
-            return fetch(baseURL);
+            return fetch("".concat(baseURL, "/").concat(id), {
+              method: 'DELETE'
+            });
 
           case 2:
             response = _context5.sent;

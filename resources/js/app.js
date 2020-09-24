@@ -69,7 +69,7 @@ function createNewReport() {
                 renderReportList(res);
                 cancelNewReport();
             });
-        })
+        });
     }
 
     const reportsError = document.getElementById('reports_error');
@@ -95,6 +95,14 @@ window.onContextMenuClick = (el, event) => {
     event.stopPropagation();
     closeAllContextMenus();
     el.nextElementSibling.classList.remove('hidden');
+}
+
+window.onDeleteReport = (id) => {
+    return reportService.deleteOneById(id).then(() => {
+        reportService.getAll().then((res) => {
+            renderReportList(res);
+        });
+     });
 }
 
 

@@ -34,8 +34,9 @@ async function updateOneById(id) {
 }
 
 async function deleteOneById(id) {
-    // TODO:
-    const response = await fetch(baseURL);
+    const response = await fetch(`${baseURL}/${id}`, {
+        method: 'DELETE',
+    });
     const data = await response.json();
     return data;
 }
