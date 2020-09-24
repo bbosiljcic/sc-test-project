@@ -151,7 +151,7 @@ function editReport(el) {
     editInput.setAttribute('type', 'text');
     editInput.setAttribute('id', 'reports_edit_input');
     editInput.setAttribute('class', 'reports_edit_input');
-    editInput.value = el.children[1].innerHTML;
+    editInput.value = span.innerHTML;
 
     el.append(editInput, span);
 }

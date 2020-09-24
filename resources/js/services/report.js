@@ -3,14 +3,12 @@ const baseURL = './reports';
 async function getAll() {
     const response = await fetch(baseURL);
     const data = await response.json();
-    console.log('getAll result:', data);
     return data;
 }
 
 async function getOneById(id) {
     const response = await fetch(`${baseURL}/${id}`);
     const data = await response.json();
-    console.log('getOneById result:', data);
     return data;
 }
 

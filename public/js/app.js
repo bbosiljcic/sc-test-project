@@ -992,7 +992,7 @@ function editReport(el) {
   editInput.setAttribute('type', 'text');
   editInput.setAttribute('id', 'reports_edit_input');
   editInput.setAttribute('class', 'reports_edit_input');
-  editInput.value = el.children[1].innerHTML;
+  editInput.value = span.innerHTML;
   el.append(editInput, span);
 }
 
@@ -1088,10 +1088,9 @@ function _getAll() {
 
           case 5:
             data = _context.sent;
-            console.log('getAll result:', data);
             return _context.abrupt("return", data);
 
-          case 8:
+          case 7:
           case "end":
             return _context.stop();
         }
@@ -1122,10 +1121,9 @@ function _getOneById() {
 
           case 5:
             data = _context2.sent;
-            console.log('getOneById result:', data);
             return _context2.abrupt("return", data);
 
-          case 8:
+          case 7:
           case "end":
             return _context2.stop();
         }
