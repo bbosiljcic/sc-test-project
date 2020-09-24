@@ -18,19 +18,21 @@ const colorList = [
     '3F51B5',
     '8E24AA',
     'FFE082',
-]
+];
 
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', () => {
     renderReportList();
     document.addEventListener('keyup', (e) => {
         if (e.code === 'Escape') onEsc();
         else if (e.code === 'Enter') onEnter();
     });
-})
+});
 
 function init() {
     // fetch reports on load
-    reportService.getAll().then((res) => { renderReportList(res); });
+    reportService.getAll().then((res) => {
+        renderReportList(res);
+    });
 }
 
 
@@ -38,33 +40,32 @@ function renderReportList(result) {
     const reportsList = document.getElementById('reports_list');
 
     if (!result) {
-        return ''
+        return '';
     }
 
     if (result && result.status && result.status === 200) {
         if (result.data.length) {
+            const renderContextMenu = id => (
+                `
+          <a class="report_context" onClick="window.onContextMenuClick(this, event)"> </a>
+          <div class="report_context_menu hidden">
+              <a onClick="window.onEditReport(${id})"><i class="fas fa-pencil-alt"></i>Edit</a>
+              <a onClick="window.onDeleteReport( ${id})"><i class="far fa-trash-alt"></i>Delete</a>
+          </div>
+        `
+            );
 
-            const renderContextMenu = (id) => (
+            const renderAvatar = i => (
                 `
-                <a class="report_context" onClick="window.onContextMenuClick(this, event)"> </a>
-                <div class="report_context_menu hidden">
-                    <a onClick="window.onEditReport(${id})"><i class="fas fa-pencil-alt"></i>Edit</a>
-                    <a onClick="window.onDeleteReport( ${id})"><i class="far fa-trash-alt"></i>Delete</a>
-                </div>
-                `
-            )
+        <span class="report_avatar" style="background-color: #${colorList[i % colorList.length]}"> </span>
+        `
+            );
 
-             const renderAvatar = (i) => (
-                `
-                <span class="report_avatar" style="background-color: #${colorList[i % colorList.length]}"> </span>
-                `
-                        )
             const list = result.data.map((r, i) => `<li class="report_list_item" title="${r.title}" data-report-id="${r.id}">${renderAvatar(i)}<span class="report_title">${r.title}</span> ${renderContextMenu(r.id)}</li>`);
-            return reportsList.innerHTML =`<ul>${list.join('')}</ul>`;
+            return reportsList.innerHTML = `<ul>${list.join('')}</ul>`;
         }
 
         return reportsList.innerHTML = '<p class="report_list_empty">It seems you have not created any reports, please use the button below</p>';
-
     }
 
     reportsList.innerHTML('Something went wrong fetching report data!');
@@ -84,9 +85,8 @@ function onEsc() {
         reportService.getAll().then((res) => {
             renderReportList(res);
             editingReport = null;
-        })
+        });
     }
-
 }
 
 function onEnter() {
@@ -114,7 +114,6 @@ function onEnter() {
                     editingReport = null;
                 });
             });
-
         }
 
         // just refetch data if an empty title was set
@@ -174,21 +173,21 @@ window.onSaveReport = () => {
     const reportsInput = document.getElementById('reports_input');
     reportsInput.classList.remove('hidden');
     creatingReport = true;
-}
+};
 
 window.onContextMenuClick = (el, event) => {
     event.stopPropagation();
     closeAllContextMenus();
     el.nextElementSibling.classList.remove('hidden');
-}
+};
 
-window.onDeleteReport = (id) => {
-    return reportService.deleteOneById(id).then(() => {
+window.onDeleteReport = id => (
+    reportService.deleteOneById(id).then(() => {
         reportService.getAll().then((res) => {
             renderReportList(res);
         });
-     });
-}
+    })
+);
 
 window.onEditReport = (id) => {
     // don't allow editing of more than one reports at the same time
@@ -196,27 +195,25 @@ window.onEditReport = (id) => {
         // trying to edit the same report again, do nothing
         if (editingReport === id) {
             return;
-        } else {
-            cancelReportEdit(findReportElementById(editingReport));
         }
+        cancelReportEdit(findReportElementById(editingReport));
     }
 
     if (creatingReport) onEsc();
 
     editReport(findReportElementById(id));
     editingReport = id;
-}
+};
 
 window.onToggleReportsView = (el) => {
     el.classList.toggle('wrapper-hidden');
     const wrapper = document.querySelector('.reports_list_wrapper');
     wrapper.classList.toggle('hidden');
+};
 
-}
 
-
-window.onclick = function (event) {
+window.onclick = () => {
     closeAllContextMenus();
-}
+};
 
 window.onload = init();

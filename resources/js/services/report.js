@@ -17,9 +17,9 @@ async function create(title) {
         method: 'POST',
         body: `title=${title}`,
         headers: {
-            'Content-type': 'application/x-www-form-urlencoded'
-        }
-    })
+            'Content-type': 'application/x-www-form-urlencoded',
+        },
+    });
     const data = await response.json();
     return data;
 }
@@ -29,9 +29,9 @@ async function updateOneById(id, title) {
         method: 'PATCH',
         body: `title=${title}`,
         headers: {
-            'Content-type': 'application/x-www-form-urlencoded'
-        }
-    })
+            'Content-type': 'application/x-www-form-urlencoded',
+        },
+    });
     const data = await response.json();
     return data;
 }
@@ -43,8 +43,6 @@ async function deleteOneById(id) {
     const data = await response.json();
     return data;
 }
-
-
 
 export default {
     getAll,

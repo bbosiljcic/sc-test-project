@@ -871,7 +871,7 @@ __webpack_require__.r(__webpack_exports__);
 var creatingReport = false;
 var editingReport = null;
 var colorList = ['009688', '00695C', 'FFEE58', '5C6BC0', '8D6E63', '039BE5', '283593', '9C27B0', 'EC407A', 'FFC107', 'FF8A65', '3F51B5', '8E24AA', 'FFE082'];
-document.addEventListener('DOMContentLoaded', function (event) {
+document.addEventListener('DOMContentLoaded', function () {
   renderReportList();
   document.addEventListener('keyup', function (e) {
     if (e.code === 'Escape') onEsc();else if (e.code === 'Enter') onEnter();
@@ -895,11 +895,11 @@ function renderReportList(result) {
   if (result && result.status && result.status === 200) {
     if (result.data.length) {
       var renderContextMenu = function renderContextMenu(id) {
-        return "\n                <a class=\"report_context\" onClick=\"window.onContextMenuClick(this, event)\"> </a>\n                <div class=\"report_context_menu hidden\">\n                    <a onClick=\"window.onEditReport(".concat(id, ")\"><i class=\"fas fa-pencil-alt\"></i>Edit</a>\n                    <a onClick=\"window.onDeleteReport( ").concat(id, ")\"><i class=\"far fa-trash-alt\"></i>Delete</a>\n                </div>\n                ");
+        return "\n          <a class=\"report_context\" onClick=\"window.onContextMenuClick(this, event)\"> </a>\n          <div class=\"report_context_menu hidden\">\n              <a onClick=\"window.onEditReport(".concat(id, ")\"><i class=\"fas fa-pencil-alt\"></i>Edit</a>\n              <a onClick=\"window.onDeleteReport( ").concat(id, ")\"><i class=\"far fa-trash-alt\"></i>Delete</a>\n          </div>\n        ");
       };
 
       var renderAvatar = function renderAvatar(i) {
-        return "\n                <span class=\"report_avatar\" style=\"background-color: #".concat(colorList[i % colorList.length], "\"> </span>\n                ");
+        return "\n        <span class=\"report_avatar\" style=\"background-color: #".concat(colorList[i % colorList.length], "\"> </span>\n        ");
       };
 
       var list = result.data.map(function (r, i) {
@@ -1036,9 +1036,9 @@ window.onEditReport = function (id) {
     // trying to edit the same report again, do nothing
     if (editingReport === id) {
       return;
-    } else {
-      cancelReportEdit(findReportElementById(editingReport));
     }
+
+    cancelReportEdit(findReportElementById(editingReport));
   }
 
   if (creatingReport) onEsc();
@@ -1052,7 +1052,7 @@ window.onToggleReportsView = function (el) {
   wrapper.classList.toggle('hidden');
 };
 
-window.onclick = function (event) {
+window.onclick = function () {
   closeAllContextMenus();
 };
 
